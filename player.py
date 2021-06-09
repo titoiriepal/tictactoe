@@ -19,15 +19,16 @@ class Player:
                 move = int(move)
             except ValueError:
                 print('Por favor, introduce un número válido')
-                move = None
+                return None
 
-            if move < 1 or move > 9:
-                print('El número elegido no es una de las casillas. Por favor, introduce un número del 1 al 9')
-                move = None
-            else:
-                if board.tableboard[move - 1] != 0:
-                    print('El número elegido ya está ocupado, prueba con otro')
-                    move = None
+            try:
+                if move < 1 or move > 9:
+                    print('El número elegido no es una de las casillas. Por favor, introduce un número del 1 al 9')
+                    return None
+                else:
+                    if board.tableboard[move - 1] != 0:
+                        print('El número elegido ya está ocupado, prueba con otro')
+                        return None
+            except TypeError:
+                return None
         return move
-            
-
