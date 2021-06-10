@@ -13,6 +13,7 @@ class Board:
 
     def assignValue(self, turn, move, value):
         self.tableboard[move - 1] = value
+        self.displayBoard()
 
     def fillBoard(self):
         for i in range(0, 3):
@@ -49,6 +50,6 @@ class Board:
         for i in range(0, 3):
             freeMoves = getFill(i)
             if i != 2:
-                print(f'                   ' + "\033[4;37m" + f'{freeMoves[0]}|{freeMoves[1]}|{freeMoves[2]}' + '\033[0;37m')
+                print(f'                ' + "\033[4;37m" + f'{freeMoves[0]}|{freeMoves[1]}|{freeMoves[2]}' + '\033[0;37m')
             else:
-                print(f'                   {freeMoves[0]}|{freeMoves[1]}|{freeMoves[2]}')
+                print(f'                {freeMoves[0]}|{freeMoves[1]}|{freeMoves[2]}')

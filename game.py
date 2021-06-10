@@ -18,30 +18,20 @@ class Game:
 
     def playGame(self):
         while True:
-            if self.turn % 2 == 1:
-                move = self.player1.chooseMove(self.turn, self.board)
-                self.board.assignValue(self.turn, move, self.player1.value)
-                self.board.displayBoard()
-                victory = self.checkWin(self.board)
+            self.manageInput(self.turn, self.board, self.player1.value, 'Jugador1')
+            self.manageInput(self.turn, self.board, self.player2.value, 'Jugador2')
 
-                if victory is True:
-                    print('¡¡¡Enhorabuena, jugador 1. Has ganado la partida!!!')
-                    exit()
-
-            else:
-                move = self.player2.chooseMove(self.turn, self.board)
-                self.board.assignValue(self.turn, move, self.player2.value)
-                self.board.displayBoard()
-                victory = self.checkWin(self.board)
-
-                if victory is True:
-                    print('¡¡¡Enhorabuena, jugador 2. Has ganado la partida!!!')
-                    exit()
-
-            if self.turn == 9:
-                print(' Ha sido un empate')
-                exit()
-            self.turn += 1
+    def manageInput(self, turn, board, playerValue, namePlayer):
+        move = self.player1.chooseMove(turn, board)
+        self.board.assignValue(turn, move, playerValue)
+        victory = self.checkWin(board)
+        if victory is True:
+            print(f'¡¡¡Enhorabuena, {namePlayer}. Has ganado la partida!!!')
+            exit()
+        self.turn += 1
+        if self.turn == 10:
+            print(' Ha sido un empate')
+            exit()
 
     def checkWin(self, board):
         for a, b, c in self.WINNERMOVES:
