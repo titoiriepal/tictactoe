@@ -1,6 +1,13 @@
+import game
+import random
 
 
 class Player:
+    WINNERMOVES = [(0, 1, 2), (3, 4, 5), (6, 7, 8),
+                  (0, 3, 6), (1, 4, 7), (2, 5, 8),
+                  (0, 4, 8), (2, 4, 6)]
+    SQUARES = [0, 2, 6, 8]
+    NOTSQUARES = [1, 3, 5, 7]
 
     def __init__(self, value, character):
         self.value = value
@@ -32,3 +39,101 @@ class Player:
             except TypeError:
                 move = None
         return move
+
+    def cpuMove(self, tablero, turn):
+        move = 10
+
+        if turn == 1:
+            move = 4
+            return move
+        if turn == 2:
+            if tablero.tableboard[4] == 0:
+                move = 4
+                return move
+            else:
+                return self.chooseSquare(tablero, turn)
+        if turn == 3:
+            return self.chooseSquare(tablero, turn)
+        if turn > 3:
+            return self.checkMove(tablero)
+
+    def chooseSquare(self, tablero, turn):
+        fail = random.randint(0, 10)
+        if turn == 2:
+            if fail == 5:
+                return random.choice(self.NOTSQUARES)
+            return random.choice(self.SQUARES)
+        if turn == 3:
+            lastMove = tablero.tableboard.index(-1)
+            if lastMove == 4:
+                myLastMove = tablero.tableboard.index(1)
+                if myLastMove == 0 or myLastMove == 8:
+                    return random.choice([2, 6])
+                else:
+                    return random.choice([0, 8])
+            if lastMove not in self.SQUARES:
+                if lastMove == 1 or lastMove == 7:
+                    return lastMove + 1
+                else:
+                    return lastMove + 3
+            else:
+                if lastMove == 0 or lastMove == 8:
+                    return random.choice([2, 6])
+                else:
+                    return random.choice([0, 8])
+
+    def checkMove(self, tablero):
+        markRival = 1
+
+        for i in range(0, 9):
+            if tablero.tableboard[i] == 0:
+                tablero.tableboard[i] = self.value
+                victory = self.checkWin(tablero)
+                tablero.tableboard[i] = 0
+                if victory is True:
+                    return i
+
+        for i in range(0, 9):
+            if tablero.tableboard[i] == 0:
+                tablero.tableboard[i] = markRival
+                victory = self.checkWin(tablero)
+                tablero.tableboard[i] = 0
+                if victory is True:
+                    return i
+
+        return self.notObligateMove(tablero, self.value, markRival)
+
+    def notObligateMove(self, tablero, markPlayer, markRival):
+        maximum = 0
+        move = 10
+        for i in range(0, 9):
+            if tablero.tableboard[i] == 0:
+                tablero.tableboard[i] = markPlayer
+                goodcounts = 0
+                for a, b, c in game.Game.WINNERMOVES:
+                    table = [tablero.tableboard[a], tablero.tableboard[b], tablero.tableboard[c]]
+                    if table.count(markPlayer) == 2 and markRival not in table:
+                        goodcounts += 1
+                    if goodcounts > maximum:
+                        maximum = goodcounts
+                        move = i
+                tablero.tableboard[i] = 0
+
+        if move != 10:
+            return move
+
+        for i in self.NOTSQUARES:
+            if tablero.tableboard[i] == 0:
+                return i
+
+        for i in self.SQUARES:
+            if tablero.tableboard[i] == 0:
+                return i
+        return move
+
+    def checkWin(self, tablero):  # Comprobamos las condiciones de victoria en la constante de arriba
+        for a, b, c in self.WINNERMOVES:
+            if tablero.tableboard[a] + tablero.tableboard[b] + tablero.tableboard[c] == 3:
+                return True
+            if tablero.tableboard[a] + tablero.tableboard[b] + tablero.tableboard[c] == -3:
+                return True
