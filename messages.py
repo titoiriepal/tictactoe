@@ -1,13 +1,4 @@
-import game
-import os
-import curses
-from messages import messages
-
-
-class Menu():
-
-    def __init__(self):
-        self.img = '''
+messages = {"menu": '''
             ******************************************************************************************
             ******************************************************************************************
             **                                                                                      **
@@ -27,26 +18,14 @@ class Menu():
             **                                      3. Salir                                        **
             **                                                                                      **
             ******************************************************************************************
-            ******************************************************************************************'''
-        self.printMenu()
-
-    def chooseOption(self):
-        tableOption = ['1', '2', '3']
-        option = None
-        while option is None:
-            option = input(messages["introOption"])
-            if option not in tableOption:
-                option = None
-                self.printMenu()
-            elif option == tableOption[2]:
-                exit()
-            else:
-                game.Game(option)
-
-    def printMenu(self):
-        os.system("cls")
-        print(messages["menu"])
-        self.chooseOption()
-
-
-Menu()
+            ******************************************************************************************''',
+            "introOption": "\n Por favor introduce tu opción: ",
+            "congratulations": "¡¡¡Enhorabuena, ",
+            "win": ", has ganado la partida!!!",
+            "draw": " Ha sido un empate, ¿Quieres volver a jugar? (y/n): ",
+            "player": "Jugador ",
+            "inputNumber": ", por favor introduce tu movimiento o pulsa q para salir: ",
+            "validateNumber": "Por favor, introduce un número válido",
+            "outOfRange": "El número elegido no es una de las casillas. Por favor, introduce un número del 1 al 9",
+            "wrongNumber": "El número elegido ya está ocupado, prueba con otro"
+            }

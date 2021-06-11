@@ -1,5 +1,6 @@
 from board import Board
 from player import Player
+from messages import messages
 
 
 class Game:
@@ -34,11 +35,17 @@ class Game:
         self.board.assignValue(turn, move, playerValue)
         victory = self.checkWin(board)
         if victory is True:
-            print(f'¡¡¡Enhorabuena, {namePlayer}. Has ganado la partida!!!')
+            print(f'{messages["congratulations"]} {namePlayer}{messages["win"]}')
             exit()
         self.turn += 1
         if self.turn == 10:
-            print(' Ha sido un empate')
+            regame = ' '
+            while regame not in ('y', 'n'):
+                regame = input(messages["draw"])
+                regame = regame.lower()
+                election = regame.startswith('y')
+                if election:
+                    Game(self.option)
             exit()
 
     def checkWin(self, board):

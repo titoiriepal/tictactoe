@@ -1,11 +1,12 @@
 import game
 import random
+from messages import messages
 
 
 class Player:
     WINNERMOVES = [(0, 1, 2), (3, 4, 5), (6, 7, 8),
-                  (0, 3, 6), (1, 4, 7), (2, 5, 8),
-                  (0, 4, 8), (2, 4, 6)]
+                (0, 3, 6), (1, 4, 7), (2, 5, 8),
+                (0, 4, 8), (2, 4, 6)]
     SQUARES = [0, 2, 6, 8]
     NOTSQUARES = [1, 3, 5, 7]
 
@@ -17,24 +18,24 @@ class Player:
         move = None
         while move is None:
             currPlayer = '1' if turn % 2 else '2'
-            msg = 'Jugador ' + currPlayer
-            move = input(f'{msg}, por favor introduce tu movimiento o pulsa q para salir: ').lower()
+            msg = messages["player"] + currPlayer
+            move = input(f'{msg}{messages["inputNumber"]}').lower()
 
             if move == 'q':
                 exit()
             try:
                 move = int(move)
             except ValueError:
-                print('Por favor, introduce un número válido')
+                print(messages["validateNumber"])
                 move = None
 
             try:
                 if move < 1 or move > 9:
-                    print('El número elegido no es una de las casillas. Por favor, introduce un número del 1 al 9')
+                    print(messages["outOfRange"])
                     move = None
                 else:
                     if board.tableboard[move - 1] != 0:
-                        print('El número elegido ya está ocupado, prueba con otro')
+                        print(messages["wrongNumber"])
                         move = None
             except TypeError:
                 move = None
@@ -46,14 +47,12 @@ class Player:
         if turn == 1:
             move = 4
             return move
-        if turn == 2:
+        if turn in (2, 3):
             if tablero.tableboard[4] == 0:
                 move = 4
                 return move
             else:
                 return self.chooseSquare(tablero, turn)
-        if turn == 3:
-            return self.chooseSquare(tablero, turn)
         if turn > 3:
             return self.checkMove(tablero)
 
@@ -106,17 +105,24 @@ class Player:
     def notObligateMove(self, tablero, markPlayer, markRival):
         maximum = 0
         move = 10
+
+        def checkTable(move, maximum):
+            goodcounts = 0
+            for a, b, c in self.WINNERMOVES:
+                table = [tablero.tableboard[a], tablero.tableboard[b], tablero.tableboard[c]]
+                if table.count(markPlayer) == 2 and markRival not in table:
+                    goodcounts += 1
+                if goodcounts > maximum:
+                    maximum = goodcounts
+                    move = i
+            return [move, maximum]
+
         for i in range(0, 9):
             if tablero.tableboard[i] == 0:
                 tablero.tableboard[i] = markPlayer
-                goodcounts = 0
-                for a, b, c in game.Game.WINNERMOVES:
-                    table = [tablero.tableboard[a], tablero.tableboard[b], tablero.tableboard[c]]
-                    if table.count(markPlayer) == 2 and markRival not in table:
-                        goodcounts += 1
-                    if goodcounts > maximum:
-                        maximum = goodcounts
-                        move = i
+                moveAndMaximum = checkTable(move, maximum)
+                move = moveAndMaximum[0]
+                maximum = moveAndMaximum[1]
                 tablero.tableboard[i] = 0
 
         if move != 10:
@@ -131,7 +137,7 @@ class Player:
                 return i
         return move
 
-    def checkWin(self, tablero):  # Comprobamos las condiciones de victoria en la constante de arriba
+    def checkWin(self, tablero):
         for a, b, c in self.WINNERMOVES:
             if tablero.tableboard[a] + tablero.tableboard[b] + tablero.tableboard[c] == 3:
                 return True
